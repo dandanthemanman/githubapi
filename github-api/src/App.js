@@ -6,6 +6,7 @@ function App() {
 
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [username, setUsername] = useState('')
 
   useEffect(() => {
     fetch('https://api.github.com/users/dandanthemanman')
@@ -17,6 +18,21 @@ function App() {
       .catch(error => console.error('Error fetching data:', error));
   }, []);
 
+
+  const handleChange = (e) => {
+    setUsername(e.target.value)
+  }
+
+  const handleSearch = () => {
+    fetch(`https://api.github.com/users/${username}`)
+      .then(response => response.json())
+      .then(data => {
+        setData(data);
+        setLoading(false);
+      })
+      .catch(error => console.error('Error fetching data:', error));
+  }
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -26,6 +42,14 @@ function App() {
       <h1>GitHub User Data</h1>
       {data && (
         <div>
+          <h1>GitHub User Search</h1>
+      <input
+        type="text"
+        value={username}
+        onChange={handleChange}
+        placeholder="Enter GitHub username"
+      />
+      <button onClick={handleSearch}>Search</button>
           <pre>{JSON.stringify(data, null, 2)}</pre>
           <p>Username: {data.login}</p>
           <p>ID: {data.id}</p>
